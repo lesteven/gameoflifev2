@@ -11,6 +11,8 @@ class Canvas extends Component{
 		}
 		this.colorCell = this.colorCell.bind(this);
 		this.generate = this.generate.bind(this);
+		this.drawGrid = this.drawGrid.bind(this);
+		this.initGrid = this.initGrid.bind(this);
 	}
 	generate(){
 		let genArray = this.state.genArray;
@@ -45,26 +47,43 @@ class Canvas extends Component{
 		console.log(Math.floor(x/cellSize),Math.floor(y/cellSize),
 			xrounded,yrounded,cellColor)	
 	}
-	componentDidMount(){
+	initGrid(){
 		const cellSize = this.state.cellSize;
 		const length = this.state.length;
 		const cellLength = length/cellSize;
 		const grid = this.state.grid;
-		let canvas = document.getElementById('canvas');
-		let j = 0;
-		let ctx;
 		for(let i=0; i< cellLength*cellLength; i++){
 			grid.push(0);
 		}
-		console.log(grid);
-		if(canvas.getContext){
-			ctx = canvas.getContext('2d');
-			for(let i=0; i<=this.state.length;i+=cellSize){
-				if(i===this.state.length){j+=cellSize;i=0;}
-				if(j===this.state.length){return}
-				ctx.rect(i,j,cellSize,cellSize);
-			}
-		}
+		this.setState({grid:grid})
+	}
+	drawGrid(){
+		const cellSize = this.state.cellSize;
+		const length = this.state.length;
+		const grid = this.state.grid;
+		let canvas = document.getElementById('canvas');
+		let i = 0;
+		let j = 0;
+		let ctx = canvas.getContext('2d');
+
+		grid.map((each,index)=>{
+			if(each===0){
+				console.log('each is 0',index);
+				ctx.rect(i,j,cellSize,cellSize);}
+			else if(each===1){
+				console.log('each is 1',index);
+				ctx.fillStyle ='yellow';
+				ctx.fillRect(i,j,cellSize,cellSize);}
+			if(i < length){i+=50;}
+			if(i===length){j+=cellSize;i=0}
+			return null;
+		})
+		
+		console.log(this.state.grid)
+	}
+	componentDidMount(){
+		this.initGrid();
+		this.drawGrid();
 	}
 	render(){
 
