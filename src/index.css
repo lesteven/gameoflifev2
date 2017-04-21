@@ -5,3 +5,20 @@ body {
 canvas{
 	border:1px solid black;
 }
+button{
+	padding:10px;
+	margin:1%;
+	border-radius: 5px;
+	outline:none;
+	color:white;
+}
+.run{
+	background-color: #003300;
+	
+}
+.pause{
+	background-color: #660000;
+}
+.clear{
+	background-color: #400040;
+}
