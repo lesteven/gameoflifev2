@@ -7,14 +7,17 @@ class Canvas extends Component{
 			length:500,
 			cellSize:50,
 			totalCells: 100,
-			liveCells:[],
-			grid:[]
+			cellsPerRow:10,
+			nextGen:[],
+			grid:[],
+			color:"#004000"
 		}
 		this.colorCell = this.colorCell.bind(this);
 		this.generate = this.generate.bind(this);
 		this.drawGrid = this.drawGrid.bind(this);
 		this.initGrid = this.initGrid.bind(this);
 		this.updateArray = this.updateArray.bind(this);
+		this.checkNeighbor = this.checkNeighbor.bind(this);
 	}
 	generate(){
 		let totalCells = this.state.totalCells;
@@ -47,19 +50,22 @@ class Canvas extends Component{
 		const yrounded = Math.floor(y/cellSize)*cellSize;
 		//gets color of clicked cell
 		const cellColor = JSON.stringify(Array.from(ctx.getImageData(x,y,1,1).data));
-		const yellow = "[255,255,0,255]";
+		const green = "[0,64,0,255]";
 		//finds index to replace in grid array
 		const replace = Math.floor(x/cellSize)+ Math.floor(y/cellSize)*cellLength;
-		if(cellColor !== yellow){
+		if(cellColor !== green){
 			//fills in grid to prevent rerendering
-			ctx.fillStyle ='yellow';
+			ctx.fillStyle = this.state.color;
+			//console.log(cellColor)
 			ctx.fillRect(xrounded,yrounded,cellSize,cellSize);
+
 			//console.log('replace:'+replace);
 			//update state of grid
 			this.updateArray(replace,1);
 		} else{
 			//fills in grid to prevent rerendering
-			ctx.fillStyle ='white';
+			//console.log(cellColor)
+			ctx.fillStyle ='#cccccc';
 			ctx.fillRect(xrounded,yrounded,cellSize,cellSize);
 			//console.log('replace:'+replace);
 			//update state of grid
@@ -76,7 +82,7 @@ class Canvas extends Component{
 			grid.push(0);
 		}
 		this.setState({grid:grid});	
-		console.log('init&&clear',this.state.grid,grid);
+		//console.log('init&&clear',this.state.grid,grid);
 	}
 	drawGrid(){
 		const cellSize = this.state.cellSize;
@@ -88,20 +94,51 @@ class Canvas extends Component{
 		let ctx = canvas.getContext('2d');
 		grid.map((each,index)=>{
 			if(each===0){		
-				ctx.rect(i,j,cellSize,cellSize);}
+				ctx.strokeRect(i,j,cellSize,cellSize);}
 			else if(each===1){
-				ctx.fillStyle ='yellow';
+				ctx.fillStyle =this.state.color;
 				ctx.fillRect(i,j,cellSize,cellSize);}
-			if(i < length){i+=50;}
+			if(i < length){i+=cellSize;}
 			if(i===length){j+=cellSize;i=0}
 			return null;
 		})
-		console.log(this.state.grid)
+		//console.log(this.state.grid)
 	}
 	clearGrid(){
 		let canvas = document.getElementById('canvas');
 		let ctx = canvas.getContext('2d');
 		ctx.clearRect(0,0,canvas.width,canvas.height);
+	}
+	checkNeighbor(){
+		const cellsPerRow = this.state.cellsPerRow;
+		const grid = this.state.grid;
+		const totalCells = this.state.totalCells;
+		let nextGen = this.state.nextGen;
+		grid.map((each,index)=>{
+			let counter = 0;
+			let row = Math.floor(index/cellsPerRow);
+			//if left goes into lower row, then left is on far right, else left is -1.
+			const left = (index-1)===row*cellsPerRow-1? 
+				grid[index+(cellsPerRow-1)]:grid[index-1];
+			//if right goes into higher row, then right is on far left, else right is +1.
+			const right = (index+1)=== (row+1)*cellsPerRow?
+				grid[index-(cellsPerRow-1)]:grid[index+1];
+			//if top goes into negative row, then top is on far bottom, else top is -10.
+			const top = (index-cellsPerRow) < 0?
+				grid[index+(totalCells-cellsPerRow)]:grid[index-cellsPerRow];
+			if(left===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,left);
+			}
+			if(right===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,right);
+			}
+			if(top===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,top);
+			}	
+		})
 	}
 	componentDidMount(){
 		this.generate();
@@ -111,12 +148,15 @@ class Canvas extends Component{
 		return(
 			<div>
 			<div>
-				<button className="run">Run</button>
+				<button className="run"
+					onClick={this.checkNeighbor}
+					>Run</button>
 				<button className="pause">Pause</button>
 				<button className="clear"
 					onClick={()=>{
 						this.initGrid();
-						this.clearGrid()}}
+						this.clearGrid();
+						this.drawGrid()}}
 				>Clear</button>
 				<button 
 					className="generate"
