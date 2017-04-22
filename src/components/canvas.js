@@ -6,6 +6,7 @@ class Canvas extends Component{
 		this.state={
 			length:500,
 			cellSize:50,
+			totalCells: 100,
 			liveCells:[],
 			grid:[]
 		}
@@ -16,13 +17,13 @@ class Canvas extends Component{
 		this.updateArray = this.updateArray.bind(this);
 	}
 	generate(){
-		let genArray = this.state.genArray;
-		const cellSize = this.state.cellSize;
-		let genX = Math.floor(Math.random()*10)*cellSize;
-		let genY = Math.floor(Math.random()*10)*cellSize;
-		let gen = [genX,genY];
-		genArray.push(gen);
-		//console.log(genArray);
+		let totalCells = this.state.totalCells;
+		let grid = [];
+		for(let i = 0; i < totalCells; i++){
+			let gen = Math.floor(Math.random()*2);
+			grid.push(gen);
+		}
+		this.setState({grid:grid})
 	}
 	updateArray(index,num){
 		let grid = this.state.grid;
@@ -67,28 +68,25 @@ class Canvas extends Component{
 			xrounded,yrounded,cellColor)	*/
 	}
 	initGrid(){
-		const cellSize = this.state.cellSize;
-		const length = this.state.length;
-		const cellLength = length/cellSize;
-		const grid = [];
-		for(let i=0; i< cellLength*cellLength; i++){
+		let totalCells = this.state.totalCells;
+		let grid = [];
+		for(let i=0; i< totalCells; i++){
 			grid.push(0);
 		}
 		this.setState({grid:grid});	
-		//console.log('init&&clear',this.state.grid);
+		console.log('init&&clear',this.state.grid,grid);
 	}
 	drawGrid(){
 		const cellSize = this.state.cellSize;
 		const length = this.state.length;
-		const grid = this.state.grid;
+		let grid = this.state.grid;
 		let canvas = document.getElementById('canvas');
 		let i = 0;
 		let j = 0;
 		let ctx = canvas.getContext('2d');
-
 		grid.map((each,index)=>{
 			if(each===0){		
-				ctx.rect(i,j,cellSize,cellSize);}
+				ctx.strokeRect(i,j,cellSize,cellSize);}
 			else if(each===1){
 				ctx.fillStyle ='yellow';
 				ctx.fillRect(i,j,cellSize,cellSize);}
@@ -96,7 +94,7 @@ class Canvas extends Component{
 			if(i===length){j+=cellSize;i=0}
 			return null;
 		})
-		//console.log(this.state.grid)
+		console.log(this.state.grid)
 	}
 	clearGrid(){
 		let canvas = document.getElementById('canvas');
@@ -108,7 +106,6 @@ class Canvas extends Component{
 		this.drawGrid();
 	}
 	render(){
-
 		return(
 			<div>
 			<div>
