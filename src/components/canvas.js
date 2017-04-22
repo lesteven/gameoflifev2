@@ -7,6 +7,7 @@ class Canvas extends Component{
 			length:500,
 			cellSize:50,
 			liveCells:[],
+			totalCells:100,
 			grid:[]
 		}
 		this.colorCell = this.colorCell.bind(this);
@@ -15,13 +16,13 @@ class Canvas extends Component{
 		this.initGrid = this.initGrid.bind(this);
 	}
 	generate(){
-		let genArray = this.state.genArray;
-		const cellSize = this.state.cellSize;
-		let genX = Math.floor(Math.random()*10)*cellSize;
-		let genY = Math.floor(Math.random()*10)*cellSize;
-		let gen = [genX,genY];
-		genArray.push(gen);
-		console.log(genArray);
+		let totalCells = this.state.totalCells;
+		let grid = this.state.grid;
+		for(let i = 0; i < totalCells; i++){
+			let gen = Math.floor(Math.random()*2);
+			grid.push(gen);
+		}
+		this.setState({grid:grid})
 	}
 	colorCell(event){
 		const canvas = document.getElementById('canvas');
@@ -51,11 +52,12 @@ class Canvas extends Component{
 		const cellSize = this.state.cellSize;
 		const length = this.state.length;
 		const cellLength = length/cellSize;
-		const grid = this.state.grid;
+		const lala = this.state.grid;
+		lala.length = 0;
 		for(let i=0; i< cellLength*cellLength; i++){
-			grid.push(0);
+			lala.push(0);
 		}
-		this.setState({grid:grid})
+		this.setState({grid:lala})
 	}
 	drawGrid(){
 		const cellSize = this.state.cellSize;
@@ -69,8 +71,8 @@ class Canvas extends Component{
 		grid.map((each,index)=>{
 			if(each===0){
 				console.log('each is 0',index);
-				ctx.rect(i,j,cellSize,cellSize);}
-			else if(each===1){
+				ctx.strokeRect(i,j,cellSize,cellSize);}
+			if(each===1){
 				console.log('each is 1',index);
 				ctx.fillStyle ='yellow';
 				ctx.fillRect(i,j,cellSize,cellSize);}
@@ -82,7 +84,8 @@ class Canvas extends Component{
 		console.log(this.state.grid)
 	}
 	componentDidMount(){
-		this.initGrid();
+		this.generate();
+		
 		this.drawGrid();
 	}
 	render(){
