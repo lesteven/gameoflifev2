@@ -18,7 +18,8 @@ class Canvas extends Component{
 	}
 	generate(){
 		let totalCells = this.state.totalCells;
-		let grid = [];
+		let grid = this.state.grid;
+		grid.length=0;
 		for(let i = 0; i < totalCells; i++){
 			let gen = Math.floor(Math.random()*2);
 			grid.push(gen);
@@ -69,7 +70,8 @@ class Canvas extends Component{
 	}
 	initGrid(){
 		let totalCells = this.state.totalCells;
-		let grid = [];
+		let grid = this.state.grid;
+		grid.length = 0;
 		for(let i=0; i< totalCells; i++){
 			grid.push(0);
 		}
@@ -86,7 +88,7 @@ class Canvas extends Component{
 		let ctx = canvas.getContext('2d');
 		grid.map((each,index)=>{
 			if(each===0){		
-				ctx.strokeRect(i,j,cellSize,cellSize);}
+				ctx.rect(i,j,cellSize,cellSize);}
 			else if(each===1){
 				ctx.fillStyle ='yellow';
 				ctx.fillRect(i,j,cellSize,cellSize);}
@@ -102,7 +104,7 @@ class Canvas extends Component{
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 	}
 	componentDidMount(){
-		this.initGrid();
+		this.generate();
 		this.drawGrid();
 	}
 	render(){
@@ -112,8 +114,17 @@ class Canvas extends Component{
 				<button className="run">Run</button>
 				<button className="pause">Pause</button>
 				<button className="clear"
-				onClick={()=>{this.initGrid();this.clearGrid()}}
+					onClick={()=>{
+						this.initGrid();
+						this.clearGrid()}}
 				>Clear</button>
+				<button 
+					className="generate"
+					onClick={()=>{
+						this.clearGrid();
+						this.generate();
+						this.drawGrid()}}
+				>Generate</button>
 			</div>
 				<canvas id="canvas"
 				onClick={this.colorCell}
