@@ -141,8 +141,17 @@ class Canvas extends Component{
 				else if((index-cellsPerRow)+1 < 0){topRight = grid[(index+totalCells)-cellsPerRow+1];}
 				
 				else{topRight = grid[index-cellsPerRow+1]}
-			
+			let bottomRight = 0;
+			 	if(index+cellsPerRow+1 === totalCells+cellsPerRow){bottomRight=grid[0];}
+				else if(index+cellsPerRow+1 === (row+2)*cellsPerRow){bottomRight = grid[index+1];}
 
+				else if(index+cellsPerRow+1 >= totalCells){bottomRight = grid[(index+1)-(totalCells-cellsPerRow)];}
+				else{bottomRight = grid[index+cellsPerRow+1]}
+			let bottomLeft = 0;
+				if(index+cellsPerRow-1 === totalCells-1){bottomLeft=grid[cellsPerRow-1];}
+				else if(index+cellsPerRow-1 > totalCells-1){bottomLeft=grid[index-(cellsPerRow*row)-1];}
+				else if(Math.floor((index+cellsPerRow-1)/cellsPerRow) < row+1){bottomLeft=grid[cellsPerRow*(row+2)-1];}
+				else{bottomLeft = grid[index+cellsPerRow-1]}
 
 			if(left===1){
 				counter++;
@@ -167,6 +176,14 @@ class Canvas extends Component{
 			if(topRight===1){
 				counter++;
 				//return console.log('index:'+index,grid[index],'row:'+row,topRight);
+			}
+			if(bottomRight===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,bottomRight);
+			}
+			if(bottomLeft===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,bottomLeft);
 			}
 			return counter;
 		})
