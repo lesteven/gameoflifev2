@@ -118,7 +118,7 @@ class Canvas extends Component{
 			let counter = 0;
 			let row = Math.floor(index/cellsPerRow);
 			//if left goes into lower row, then left is on far right, else left is -1.
-			const left = (index-1)===row*cellsPerRow-1? 
+			const left = (index-1)=== row*cellsPerRow-1? 
 				grid[index+(cellsPerRow-1)]:grid[index-1];
 			//if right goes into higher row, then right is on far left, else right is +1.
 			const right = (index+1)=== (row+1)*cellsPerRow?
@@ -126,6 +126,24 @@ class Canvas extends Component{
 			//if top goes into negative row, then top is on far bottom, else top is -10.
 			const top = (index-cellsPerRow) < 0?
 				grid[index+(totalCells-cellsPerRow)]:grid[index-cellsPerRow];
+			const bottom = (index+cellsPerRow) >= totalCells?
+				grid[index-(totalCells-cellsPerRow)]:grid[index+cellsPerRow];
+
+			let topLeft = 0;
+				if(index-cellsPerRow-1 < -cellsPerRow){topLeft = grid[index+totalCells-1];}
+				else if(index-cellsPerRow-1 < -1){topLeft = grid[index+totalCells-cellsPerRow-1]}
+				else if(index-cellsPerRow-1 <(row-1)*cellsPerRow){topLeft = grid[index-1];}
+				else{topLeft=grid[index-cellsPerRow-1]}
+
+			let topRight = 0;
+				if((index -cellsPerRow)+1 ===0){topRight = grid[totalCells-cellsPerRow];}
+				else if((index-cellsPerRow)+1 === row*cellsPerRow){topRight = grid[index -(2*cellsPerRow)+1];}
+				else if((index-cellsPerRow)+1 < 0){topRight = grid[(index+totalCells)-cellsPerRow+1];}
+				
+				else{topRight = grid[index-cellsPerRow+1]}
+			
+
+
 			if(left===1){
 				counter++;
 				//return console.log('index:'+index,grid[index],'row:'+row,left);
@@ -137,7 +155,20 @@ class Canvas extends Component{
 			if(top===1){
 				counter++;
 				//return console.log('index:'+index,grid[index],'row:'+row,top);
+			}
+			if(bottom===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,bottom);
 			}	
+			if(topLeft===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,topLeft);
+			}
+			if(topRight===1){
+				counter++;
+				//return console.log('index:'+index,grid[index],'row:'+row,topRight);
+			}
+			return counter;
 		})
 	}
 	componentDidMount(){
