@@ -84,15 +84,14 @@ class Canvas extends Component{
 		this.setState({grid:grid});	
 		//console.log('init&&clear',this.state.grid,grid);
 	}
-	drawGrid(){
+	drawGrid(currentBoard){
 		const cellSize = this.state.cellSize;
 		const length = this.state.length;
-		let grid = this.state.grid;
 		let canvas = document.getElementById('canvas');
 		let i = 0;
 		let j = 0;
 		let ctx = canvas.getContext('2d');
-		grid.map((each,index)=>{
+		currentBoard.map((each,index)=>{
 			if(each===0){		
 				ctx.strokeRect(i,j,cellSize,cellSize);}
 			else if(each===1){
@@ -198,11 +197,12 @@ class Canvas extends Component{
 
 			return null;
 		})
-
+		this.clearGrid();
+		this.drawGrid(this.state.nextGen);
 	}
 	componentDidMount(){
 		this.generate();
-		this.drawGrid();
+		this.drawGrid(this.state.grid);
 	}
 	render(){
 		return(
@@ -216,14 +216,14 @@ class Canvas extends Component{
 					onClick={()=>{
 						this.initGrid();
 						this.clearGrid();
-						this.drawGrid()}}
+						this.drawGrid(this.state.grid)}}
 				>Clear</button>
 				<button 
 					className="generate"
 					onClick={()=>{
 						this.clearGrid();
 						this.generate();
-						this.drawGrid()}}
+						this.drawGrid(this.state.grid)}}
 				>Generate</button>
 			</div>
 				<canvas id="canvas"
