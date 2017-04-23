@@ -109,11 +109,20 @@ class Canvas extends Component{
 		let ctx = canvas.getContext('2d');
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 	}
+	nextBoard(status,count){
+		let nextGen = this.state.nextGen;
+		
+		if(count < 2){nextGen.push(0);}
+		else if(status===1 &&(count===2 || count===3)){nextGen.push(1);}
+		else if(count>3){nextGen.push(0);}
+		else if(count===3 && status===0){nextGen.push(1);}
+		else{nextGen.push(0);}
+		this.setState({nextGen:nextGen})
+	}
 	checkNeighbor(){
 		const cellsPerRow = this.state.cellsPerRow;
-		const grid = this.state.grid;
+		let grid = this.state.grid;
 		const totalCells = this.state.totalCells;
-		let nextGen = this.state.nextGen;
 		grid.map((each,index)=>{
 			let counter = 0;
 			let row = Math.floor(index/cellsPerRow);
@@ -185,8 +194,11 @@ class Canvas extends Component{
 				counter++;
 				//return console.log('index:'+index,grid[index],'row:'+row,bottomLeft);
 			}
-			return counter;
+			this.nextBoard(each,counter);
+
+			return null;
 		})
+
 	}
 	componentDidMount(){
 		this.generate();
