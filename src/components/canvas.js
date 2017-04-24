@@ -211,7 +211,8 @@ class Canvas extends Component{
 	}
 	componentDidMount(){
 		this.generate();
-		//setInterval(this.checkNeighbor,100)
+		let interval = setInterval(this.checkNeighbor,100)
+		this.setState({interval:interval})
 	}
 	stopRecurse(){
 		clearInterval(this.state.interval);
