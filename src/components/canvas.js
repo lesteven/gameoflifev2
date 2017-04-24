@@ -5,9 +5,9 @@ class Canvas extends Component{
 		super(props);
 		this.state={
 			length:500,
-			cellSize:50,
-			totalCells: 100,
-			cellsPerRow:10,
+			cellSize:25,
+			totalCells: 400,
+			cellsPerRow:20,
 			generations:0,
 			interval:undefined,
 			nextGen:[],
