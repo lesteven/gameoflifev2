@@ -72,7 +72,7 @@ class Canvas extends Component{
 			ctx.strokeRect(xrounded,yrounded,cellSize,cellSize);
 			this.updateArray(replace,0);
 		}
-		console.log(replace,abX,abY);
+		//console.log(replace,abX,abY);
 	}
 	initGrid(){
 
@@ -200,11 +200,12 @@ class Canvas extends Component{
 			return null;
 		})
 		this.setState({grid:nextGen},()=>{this.clearGrid();this.drawGrid(this.state.grid)});
-		this.updateGen();
+		this.checkGrid()===false?this.stopRecurse():this.updateGen();
 	}
 	recurse(){
 		//this.checkNeighbor();
 		//requestAnimationFrame(this.recurse);
+		if(this.checkGrid()===false){return}
 		let interval = setInterval(this.checkNeighbor,100)
 		this.setState({interval:interval})
 	}
@@ -222,7 +223,8 @@ class Canvas extends Component{
 	}
 	checkGrid(){
 		let grid = this.state.grid.slice();
-		
+		let ans = grid.reduce((prev,curr)=>prev+curr);
+		return ans===0? false:true;
 	}
 	render(){
 		return(
