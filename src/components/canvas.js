@@ -23,6 +23,7 @@ class Canvas extends Component{
 		this.recurse = this.recurse.bind(this);
 		this.stopRecurse = this.stopRecurse.bind(this);
 		this.updateGen = this.updateGen.bind(this);
+		this.checkGrid = this.checkGrid.bind(this);
 	}
 	generate(){
 		let totalCells = this.state.totalCells;
@@ -36,9 +37,9 @@ class Canvas extends Component{
 	}
 	updateArray(index,num){
 		let grid = this.state.grid.slice();
-		grid.splice(index,1)
-		grid.splice(index,0,num)
-		this.setState({grid:grid})
+		grid.splice(index,1);
+		grid.splice(index,0,num);
+		this.setState({grid:grid});
 		//console.log(this.state.grid);
 	}
 	colorCell(event){
@@ -48,36 +49,30 @@ class Canvas extends Component{
 		const length = this.state.length;
 		const cellLength = length/cellSize;
 		//get coordinates of grid
-		const x = event.clientX - ctx.canvas.offsetLeft;
-		const y = event.clientY - ctx.canvas.offsetTop;
-		//rounds grid coordinates in order to color in correctly.
-		const xrounded =Math.floor(x/cellSize)*cellSize;
-		const yrounded = Math.floor(y/cellSize)*cellSize;
+		const abX = event.pageX - ctx.canvas.offsetLeft;
+		const abY = event.pageY - ctx.canvas.offsetTop;
+
+		const xrounded = Math.floor(abX/cellSize)*cellSize;
+		const yrounded = Math.floor(abY/cellSize)*cellSize;
+
+		const abXR =Math.floor(abX/cellSize);
+		const abYR = Math.floor(abY/cellSize)*cellLength;
+		let replace = abXR+abYR;
 		//gets color of clicked cell
-		const cellColor = JSON.stringify(Array.from(ctx.getImageData(x,y,1,1).data));
+		const cellColor = JSON.stringify(Array.from(ctx.getImageData(abX,abY,1,1).data));
 		const green = "[0,64,0,255]";
-		//finds index to replace in grid array
-		const replace = Math.floor(x/cellSize)+ Math.floor(y/cellSize)*cellLength;
+		//finds index to replace in grid array	
 		if(cellColor !== green){
-			//fills in grid to prevent rerendering
 			ctx.fillStyle = this.state.color;
-			//console.log(cellColor)
 			ctx.fillRect(xrounded,yrounded,cellSize,cellSize);
-			//console.log('replace:'+replace);
-			//update state of grid
 			this.updateArray(replace,1);
 		} else{
-			//fills in grid to prevent rerendering
-			//console.log(cellColor)
 			ctx.fillStyle ='#cccccc';
 			ctx.fillRect(xrounded,yrounded,cellSize,cellSize);
 			ctx.strokeRect(xrounded,yrounded,cellSize,cellSize);
-			//console.log('replace:'+replace);
-			//update state of grid
 			this.updateArray(replace,0);
 		}
-		/*console.log('x:'+Math.floor(x/cellSize),'y:'+Math.floor(y/cellSize),
-			xrounded,yrounded,cellColor)	*/
+		console.log(replace,abX,abY);
 	}
 	initGrid(){
 
@@ -225,10 +220,14 @@ class Canvas extends Component{
 		generations++;
 		this.setState({generations:generations})
 	}
+	checkGrid(){
+		let grid = this.state.grid.slice();
+		
+	}
 	render(){
 		return(
 			<div>
-			<div>
+			<div >
 				<button className="run"
 					onClick={this.recurse}
 					>Run</button>

@@ -2,6 +2,7 @@ body {
   text-align:center;
   font-family: sans-serif;
   background-color: #cccccc;
+  position:absolute;
 }
 canvas{
 	border:1px solid black;
