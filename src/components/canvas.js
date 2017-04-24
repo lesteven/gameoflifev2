@@ -8,6 +8,7 @@ class Canvas extends Component{
 			cellSize:50,
 			totalCells: 100,
 			cellsPerRow:10,
+			generations:0,
 			nextGen:[],
 			grid:[],
 			color:"#004000"
@@ -21,16 +22,16 @@ class Canvas extends Component{
 	}
 	generate(){
 		let totalCells = this.state.totalCells;
-		let grid = this.state.grid;
+		let grid = this.state.grid.slice();
 		grid.length=0;
 		for(let i = 0; i < totalCells; i++){
 			let gen = Math.floor(Math.random()*2);
 			grid.push(gen);
 		}
-		this.setState({grid:grid})
+		this.setState({grid:grid},()=>this.drawGrid(this.state.grid))
 	}
 	updateArray(index,num){
-		let grid = this.state.grid;
+		let grid = this.state.grid.slice();
 		grid.splice(index,1)
 		grid.splice(index,0,num)
 		this.setState({grid:grid})
@@ -58,7 +59,6 @@ class Canvas extends Component{
 			ctx.fillStyle = this.state.color;
 			//console.log(cellColor)
 			ctx.fillRect(xrounded,yrounded,cellSize,cellSize);
-
 			//console.log('replace:'+replace);
 			//update state of grid
 			this.updateArray(replace,1);
@@ -76,15 +76,16 @@ class Canvas extends Component{
 	}
 	initGrid(){
 		let totalCells = this.state.totalCells;
-		let grid = this.state.grid;
+		let grid = this.state.grid.slice();
 		grid.length = 0;
 		for(let i=0; i< totalCells; i++){
 			grid.push(0);
 		}
-		this.setState({grid:grid});	
+		this.setState({grid:grid},()=>this.drawGrid(this.state.grid));	
 		//console.log('init&&clear',this.state.grid,grid);
 	}
 	drawGrid(currentBoard){
+		console.log('drawGrid:',this.state.grid);
 		const cellSize = this.state.cellSize;
 		const length = this.state.length;
 		let canvas = document.getElementById('canvas');
@@ -108,17 +109,17 @@ class Canvas extends Component{
 		let ctx = canvas.getContext('2d');
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 	}
-	nextBoard(status,count){
-		let nextGen = this.state.nextGen;
+	nextBoard(array,status,count){
 		
-		if(count < 2){nextGen.push(0);}
-		else if(status===1 &&(count===2 || count===3)){nextGen.push(1);}
-		else if(count>3){nextGen.push(0);}
-		else if(count===3 && status===0){nextGen.push(1);}
-		else{nextGen.push(0);}
-		this.setState({nextGen:nextGen})
+		if(count < 2){array.push(0);}
+		else if(status===1 &&(count===2 || count===3)){array.push(1);}
+		else if(count>3){array.push(0);}
+		else if(count===3 && status===0){array.push(1);}
+		else{array.push(0);}
+		
 	}
 	checkNeighbor(){
+		let nextGen = this.state.nextGen.slice();
 		const cellsPerRow = this.state.cellsPerRow;
 		let grid = this.state.grid;
 		const totalCells = this.state.totalCells;
@@ -193,16 +194,16 @@ class Canvas extends Component{
 				counter++;
 				//return console.log('index:'+index,grid[index],'row:'+row,bottomLeft);
 			}
-			this.nextBoard(each,counter);
-
+			this.nextBoard(nextGen,each,counter);
+			this.setState({grid:nextGen},()=>{this.clearGrid();this.drawGrid(this.state.grid)})
 			return null;
 		})
-		this.clearGrid();
-		this.drawGrid(this.state.nextGen);
+		
 	}
+
 	componentDidMount(){
 		this.generate();
-		this.drawGrid(this.state.grid);
+		//setInterval(this.checkNeighbor,100)
 	}
 	render(){
 		return(
@@ -214,17 +215,16 @@ class Canvas extends Component{
 				<button className="pause">Pause</button>
 				<button className="clear"
 					onClick={()=>{
-						this.initGrid();
 						this.clearGrid();
-						this.drawGrid(this.state.grid)}}
+						this.initGrid()}}
 				>Clear</button>
 				<button 
 					className="generate"
 					onClick={()=>{
 						this.clearGrid();
-						this.generate();
-						this.drawGrid(this.state.grid)}}
+						this.generate()}}
 				>Generate</button>
+				<h3> Generations : {this.state.generations}</h3>
 			</div>
 				<canvas id="canvas"
 				onClick={this.colorCell}
