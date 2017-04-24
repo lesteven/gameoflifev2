@@ -32,7 +32,7 @@ class Canvas extends Component{
 			let gen = Math.floor(Math.random()*2);
 			grid.push(gen);
 		}
-		this.setState({grid:grid},()=>this.drawGrid(this.state.grid))
+		this.setState({grid:grid,generations:0},()=>this.drawGrid(this.state.grid))
 	}
 	updateArray(index,num){
 		let grid = this.state.grid.slice();
@@ -71,7 +71,7 @@ class Canvas extends Component{
 			//console.log(cellColor)
 			ctx.fillStyle ='#cccccc';
 			ctx.fillRect(xrounded,yrounded,cellSize,cellSize);
-			//ctx.strokeRect(xrounded,yrounded,cellSize,cellSize);
+			ctx.strokeRect(xrounded,yrounded,cellSize,cellSize);
 			//console.log('replace:'+replace);
 			//update state of grid
 			this.updateArray(replace,0);
