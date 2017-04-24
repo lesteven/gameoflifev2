@@ -9,6 +9,7 @@ class Canvas extends Component{
 			totalCells: 100,
 			cellsPerRow:10,
 			generations:0,
+			interval:undefined,
 			nextGen:[],
 			grid:[],
 			color:"#004000"
@@ -19,6 +20,9 @@ class Canvas extends Component{
 		this.initGrid = this.initGrid.bind(this);
 		this.updateArray = this.updateArray.bind(this);
 		this.checkNeighbor = this.checkNeighbor.bind(this);
+		this.recurse = this.recurse.bind(this);
+		this.stopRecurse = this.stopRecurse.bind(this);
+		this.updateGen = this.updateGen.bind(this);
 	}
 	generate(){
 		let totalCells = this.state.totalCells;
@@ -67,6 +71,7 @@ class Canvas extends Component{
 			//console.log(cellColor)
 			ctx.fillStyle ='#cccccc';
 			ctx.fillRect(xrounded,yrounded,cellSize,cellSize);
+			//ctx.strokeRect(xrounded,yrounded,cellSize,cellSize);
 			//console.log('replace:'+replace);
 			//update state of grid
 			this.updateArray(replace,0);
@@ -75,17 +80,18 @@ class Canvas extends Component{
 			xrounded,yrounded,cellColor)	*/
 	}
 	initGrid(){
+
 		let totalCells = this.state.totalCells;
 		let grid = this.state.grid.slice();
 		grid.length = 0;
 		for(let i=0; i< totalCells; i++){
 			grid.push(0);
 		}
-		this.setState({grid:grid},()=>this.drawGrid(this.state.grid));	
+		this.setState({grid:grid,generations:0},()=>this.drawGrid(this.state.grid));	
 		//console.log('init&&clear',this.state.grid,grid);
 	}
 	drawGrid(currentBoard){
-		console.log('drawGrid:',this.state.grid);
+		//console.log('drawGrid:',this.state.grid);
 		const cellSize = this.state.cellSize;
 		const length = this.state.length;
 		let canvas = document.getElementById('canvas');
@@ -195,35 +201,54 @@ class Canvas extends Component{
 				//return console.log('index:'+index,grid[index],'row:'+row,bottomLeft);
 			}
 			this.nextBoard(nextGen,each,counter);
-			this.setState({grid:nextGen},()=>{this.clearGrid();this.drawGrid(this.state.grid)})
+			
 			return null;
 		})
-		
+		this.setState({grid:nextGen},()=>{this.clearGrid();this.drawGrid(this.state.grid)});
+		this.updateGen();
 	}
-
+	recurse(){
+		//this.checkNeighbor();
+		//requestAnimationFrame(this.recurse);
+		let interval = setInterval(this.checkNeighbor,100)
+		this.setState({interval:interval})
+	}
 	componentDidMount(){
 		this.generate();
 		//setInterval(this.checkNeighbor,100)
+	}
+	stopRecurse(){
+		clearInterval(this.state.interval);
+	}
+	updateGen(){
+		let generations = this.state.generations;
+		generations++;
+		this.setState({generations:generations})
 	}
 	render(){
 		return(
 			<div>
 			<div>
 				<button className="run"
-					onClick={this.checkNeighbor}
+					onClick={this.recurse}
 					>Run</button>
-				<button className="pause">Pause</button>
+				<button className="pause"
+					onClick={this.stopRecurse}
+					>Pause</button>
 				<button className="clear"
 					onClick={()=>{
+						this.stopRecurse();
 						this.clearGrid();
 						this.initGrid()}}
 				>Clear</button>
-				<button 
-					className="generate"
+				<button className="generate"
 					onClick={()=>{
 						this.clearGrid();
 						this.generate()}}
 				>Generate</button>
+				<button className="stepper"
+					onClick={this.checkNeighbor}
+					>Stepper</button>
 				<h3> Generations : {this.state.generations}</h3>
 			</div>
 				<canvas id="canvas"

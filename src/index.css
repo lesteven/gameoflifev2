@@ -26,6 +26,9 @@ button{
 .generate{
 	background-color:black;
 }
+.stepper{
+	background-color:#00007f;
+}
 h3{
-	display:inline;
+	margin:0 0 1% 0;
 }
