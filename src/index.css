@@ -1,7 +1,35 @@
 body {
   text-align:center;
   font-family: sans-serif;
+  background-color: #cccccc;
+  position:absolute;
 }
 canvas{
 	border:1px solid black;
+}
+button{
+	padding:10px;
+	margin:1%;
+	border-radius: 5px;
+	outline:none;
+	color:white;
+}
+.run{
+	background-color: #003300;
+	
+}
+.pause{
+	background-color: #660000;
+}
+.clear{
+	background-color: #400040;
+}
+.generate{
+	background-color:black;
+}
+.stepper{
+	background-color:#00007f;
+}
+h3{
+	margin:0 0 1% 0;
 }
